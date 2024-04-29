@@ -2,6 +2,9 @@ package az.developia.library.dto;
 
 import java.time.LocalDate;
 
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import jakarta.validation.constraints.Past;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -24,4 +27,7 @@ public class BookDTO {
 	@Past(message = "Keçmiş zaman olmalıdır")
 	private LocalDate realaseDate;
 
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Integer id;
 }

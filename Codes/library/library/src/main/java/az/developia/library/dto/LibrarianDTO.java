@@ -10,6 +10,7 @@ import lombok.Data;
 @AllArgsConstructor
 @Builder
 public class LibrarianDTO {
+
 	@Min(value = 0, message = "Id menfi olmamalıdır")
 	private Integer id;
 
