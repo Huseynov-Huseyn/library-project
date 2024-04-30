@@ -67,6 +67,11 @@ public class BookRestController {
 		if (br.hasErrors()) {
 			throw new OurRuntimeException(br, "melumatlarin tamligi pozulub");
 		}
+
+		if (repository.findByName(entity.getName()) != null) {
+			throw new OurRuntimeException(br, "Bu name istifade edilir");
+		}
+
 		entity.setId(null);
 		repository.save(entity);
 		return entity;

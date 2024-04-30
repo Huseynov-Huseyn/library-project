@@ -25,7 +25,7 @@ public class BookEntity {
 	private Integer id;
 
 	@Size(min = 2, max = 40, message = "Ad min 2 max 40 ola biler")
-	@Column(length = 40)
+	@Column(length = 40, unique = true)
 	private String name;
 
 	@Size(min = 1, max = 6, message = "Kitab max 100 min ola biler")
