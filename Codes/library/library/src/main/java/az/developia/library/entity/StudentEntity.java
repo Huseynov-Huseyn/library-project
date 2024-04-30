@@ -1,37 +1,35 @@
 package az.developia.library.entity;
 
-import java.time.LocalDate;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.ToString;
 
 @Entity
-@Table(name = "books")
+@Table(name = "students")
 @Getter
 @Setter
-@ToString
-public class BookEntity {
+public class StudentEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
 
-	@Size(min = 2, max = 40, message = "Ad min 2 max 40 ola biler")
-	@Column(length = 40)
+	@Column(columnDefinition = "TEXT")
 	private String name;
 
-	@Size(min = 1, max = 6, message = "Kitab max 100 min ola biler")
-	private String price;
+	@Column(columnDefinition = "TEXT")
+	private String surname;
 
-//	@Past(message = "Keçmiş zaman olmalıdır")
-	private LocalDate realaseDate;
+	@Column(unique = true)
+	private String username;
 
+	private String phone;
+
+	@Column(columnDefinition = "TEXT")
+	private String adress;
 }
