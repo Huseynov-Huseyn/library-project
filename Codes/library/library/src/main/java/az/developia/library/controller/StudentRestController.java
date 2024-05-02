@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -107,6 +108,32 @@ public class StudentRestController {
 		userRepository.deleteById(entity.getUsername());
 
 		return entity;
+	}
+
+	@PutMapping(path = "/update")
+	public void update(@RequestBody StudentEntity dto, BindingResult br) {
+
+		Integer id = dto.getId();
+		StudentEntity entity = new StudentEntity();
+
+		if (br.hasErrors()) {
+			throw new OurRuntimeException(br, "melumatlarin tamligi pozulub");
+		}
+
+		if (id == null || id <= 0) {
+			throw new OurRuntimeException(null, "id null olmaz");
+		}
+
+		if (repository.findByUsername(dto.getUsername()) != null) {
+			throw new OurRuntimeException(br, "Bu username istifade edilir");
+		} else {
+			if (repository.findById(id).isPresent()) {
+				repository.save(entity);
+			} else {
+				throw new OurRuntimeException(null, "bu id tapilmadi");
+			}
+			repository.save(entity);
+		}
 	}
 
 }
