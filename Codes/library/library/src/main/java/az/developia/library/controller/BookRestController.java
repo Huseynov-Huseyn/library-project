@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Optional;
 
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -20,17 +19,16 @@ import az.developia.library.entity.BookEntity;
 import az.developia.library.exception.OurRuntimeException;
 import az.developia.library.repository.BookRepository;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping(path = "/books")
 @CrossOrigin(origins = "*")
+@RequiredArgsConstructor
 public class BookRestController {
 
-	@Autowired
-	private BookRepository repository;
-
-	@Autowired
-	private ModelMapper mapper;
+	private final BookRepository repository;
+	private final ModelMapper mapper;
 
 	@GetMapping
 	public List<BookEntity> getBooks() {
@@ -54,11 +52,21 @@ public class BookRestController {
 		if (byId == null) {
 			throw new OurRuntimeException(null, "Id tapılmadı");
 		}
-
 		BookEntity book = byId.get();
 
 		return book;
+	}
 
+	@GetMapping("/pagination/begin/{begin}/length/{length}")
+	public List<BookEntity> findPagination(@PathVariable Integer begin, @PathVariable Integer length) {
+
+		if (length > 100) {
+			throw new OurRuntimeException(null, "Max 100 kitaba eyni anda baxa bilərsiniz");
+		}
+
+		List<BookEntity> pagination = repository.findPagination(begin, length);
+
+		return pagination;
 	}
 
 	@PostMapping(path = "/add")

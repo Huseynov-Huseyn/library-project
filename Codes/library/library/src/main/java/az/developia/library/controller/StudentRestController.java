@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Optional;
 
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -23,20 +22,17 @@ import az.developia.library.exception.OurRuntimeException;
 import az.developia.library.repository.StudentRepository;
 import az.developia.library.repository.UserRepository;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping(value = "/students")
 @CrossOrigin(origins = "*")
+@RequiredArgsConstructor
 public class StudentRestController {
 
-	@Autowired
-	private StudentRepository repository;
-
-	@Autowired
-	private UserRepository userRepository;
-
-	@Autowired
-	private ModelMapper mapper;
+	private final StudentRepository repository;
+	private final UserRepository userRepository;
+	private final ModelMapper mapper;
 
 	@GetMapping
 	private List<StudentEntity> getStudents() {
@@ -111,9 +107,10 @@ public class StudentRestController {
 	}
 
 	@PutMapping(path = "/update")
-	public void update(@RequestBody StudentEntity dto, BindingResult br) {
+//	burada username deyisimine icaze verme onu ancaq users hissesinden icaze ver
+	public void update(@RequestBody StudentEntity requestEntity, BindingResult br) {
 
-		Integer id = dto.getId();
+		Integer id = requestEntity.getId();
 		StudentEntity entity = new StudentEntity();
 
 		if (br.hasErrors()) {
@@ -124,7 +121,7 @@ public class StudentRestController {
 			throw new OurRuntimeException(null, "id null olmaz");
 		}
 
-		if (repository.findByUsername(dto.getUsername()) != null) {
+		if (repository.findByUsername(requestEntity.getUsername()) != null) {
 			throw new OurRuntimeException(br, "Bu username istifade edilir");
 		} else {
 			if (repository.findById(id).isPresent()) {
