@@ -23,7 +23,7 @@ public class LibrarianDTO {
 	@Size(min = 2, max = 20, message = "İstifadəçi adı min 2 max 20 simvoldan ibarət olmalıdır")
 	private String username;
 
-	@Size(min = 2, max = 20, message = "Şifrə min 6 max 20 simvoldan ibarət olmalıdır")
+	@Size(min = 2, max = 20, message = "Şifrə min 2 max 20 simvoldan ibarət olmalıdır")
 	private String password;
 
 	private String email;

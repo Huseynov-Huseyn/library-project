@@ -14,16 +14,17 @@ import lombok.Setter;
 @Getter
 @Setter
 public class LibrarianEntity {
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
 
-	@Column(columnDefinition = "TEXT")
+	@Column(columnDefinition = "VARCHAR(40)")
 	private String name;
 
-	@Column(columnDefinition = "TEXT")
+	@Column(columnDefinition = "VARCHAR(40)")
 	private String surname;
 
-	@Column(columnDefinition = "TEXT")
+	@Column(columnDefinition = "VARCHAR(20)", unique = true)
 	private String username;
 }
