@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.modelmapper.ModelMapper;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -35,6 +36,7 @@ public class StudentRestController {
 	private final ModelMapper mapper;
 
 	@GetMapping
+	@PreAuthorize(value = "hasAuthority('ROLE_GET_STUDENT')")
 	private List<StudentEntity> getStudents() {
 		List<StudentEntity> allStudents = repository.findAll();
 		if (allStudents.isEmpty()) {
@@ -44,6 +46,7 @@ public class StudentRestController {
 	};
 
 	@GetMapping(path = "/{id}")
+	@PreAuthorize(value = "hasAuthority('ROLE_GET_STUDENT')")
 	private StudentEntity getStudentById(@PathVariable Integer id) {
 		Optional<StudentEntity> byId = repository.findById(id);
 
@@ -61,6 +64,7 @@ public class StudentRestController {
 	};
 
 	@PostMapping(path = "/add")
+	@PreAuthorize(value = "hasAuthority('ROLE_ADD_STUDENT')")
 	private StudentEntity addStudent(@Valid @RequestBody StudentDTO dto, BindingResult br) {
 		dto.setId(null);
 
@@ -88,6 +92,7 @@ public class StudentRestController {
 	};
 
 	@DeleteMapping(path = "/delete/{id}")
+	@PreAuthorize(value = "hasAuthority('ROLE_DELETE_STUDENT')")
 	public StudentEntity deleteStudent(@PathVariable Integer id) {
 		StudentEntity entity = repository.findById(id).get();
 
@@ -105,6 +110,7 @@ public class StudentRestController {
 	}
 
 	@PutMapping(path = "/update")
+	@PreAuthorize(value = "hasAuthority('ROLE_UPDATE_STUDENT')")
 //	burada username deyisimine icaze verme onu ancaq users hissesinden icaze ver
 	public void update(@RequestBody StudentDTO requestDTO, BindingResult br) {
 

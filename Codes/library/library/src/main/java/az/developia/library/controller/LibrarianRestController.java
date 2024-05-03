@@ -3,6 +3,7 @@ package az.developia.library.controller;
 import java.util.List;
 
 import org.modelmapper.ModelMapper;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -34,6 +35,7 @@ public class LibrarianRestController {
 	private final ModelMapper mapper;
 
 	@GetMapping
+	@PreAuthorize(value = "hasAuthority('ROLE_GET_LIBRARIAN')")
 	public List<LibrarianEntity> getLibrarians() {
 
 		List<LibrarianEntity> allLibrarians = repository.findAll();
@@ -45,6 +47,7 @@ public class LibrarianRestController {
 	}
 
 	@GetMapping(path = "/{id}")
+	@PreAuthorize(value = "hasAuthority('ROLE_GET_LIBRARIAN')")
 	public LibrarianEntity getLibrarian(@PathVariable Integer id) {
 		boolean present = repository.findById(id).isPresent();
 
@@ -62,6 +65,7 @@ public class LibrarianRestController {
 	}
 
 	@PostMapping(path = "/add")
+	@PreAuthorize(value = "hasAuthority('ROLE_ADD_LIBRARIAN')")
 	public LibrarianEntity addLibrarian(@Valid @RequestBody LibrarianDTO dto, BindingResult br) {
 		if (br.hasErrors()) {
 			throw new OurRuntimeException(br, "Məlumatın tamlığı pozulub");
@@ -85,6 +89,7 @@ public class LibrarianRestController {
 	}
 
 	@DeleteMapping(path = "/delete/{id}")
+	@PreAuthorize(value = "hasAuthority('ROLE_DELETE_LIBRARIAN')")
 	public LibrarianEntity deleteLibrarian(@PathVariable Integer id) {
 		LibrarianEntity entity = repository.findById(id).get();
 
@@ -102,6 +107,7 @@ public class LibrarianRestController {
 	}
 
 	@PutMapping(path = "/update")
+	@PreAuthorize(value = "hasAuthority('ROLE_UPDATE_LIBRARIAN')")
 //	burada username deyisimine icaze verme onu ancaq users hissesinden icaze ver
 	public void updateLibrarian(@RequestBody LibrarianDTO requestDTO, BindingResult br) {
 		Integer id = requestDTO.getId();

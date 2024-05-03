@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.modelmapper.ModelMapper;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import az.developia.library.entity.BookEntity;
 import az.developia.library.exception.OurRuntimeException;
+import az.developia.library.repository.AuthorityRepository;
 import az.developia.library.repository.BookRepository;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -29,9 +31,12 @@ public class BookRestController {
 
 	private final BookRepository repository;
 	private final ModelMapper mapper;
+	private final AuthorityRepository authorityRepository;
 
 	@GetMapping
+	@PreAuthorize(value = "hasAuthority('ROLE_GET_BOOK')")
 	public List<BookEntity> getBooks() {
+
 		boolean empty = repository.findAll().isEmpty();
 		if (empty) {
 			throw new OurRuntimeException(null, "Heç bir tələbə yoxdur!");
@@ -42,14 +47,16 @@ public class BookRestController {
 	}
 
 	@GetMapping(path = "/{id}")
+	@PreAuthorize(value = "hasAuthority('ROLE_GET_BOOK')")
 	public BookEntity getBookById(@PathVariable Integer id) {
 		Optional<BookEntity> byId = repository.findById(id);
+		boolean present = byId.isPresent();
 
 		if (id <= 0 || id == null) {
 			throw new OurRuntimeException(null, "Id'i boş qoymaq olmaz!");
 		}
 
-		if (byId == null) {
+		if (present != true) {
 			throw new OurRuntimeException(null, "Id tapılmadı");
 		}
 		BookEntity book = byId.get();
@@ -58,6 +65,7 @@ public class BookRestController {
 	}
 
 	@GetMapping("/pagination/begin/{begin}/length/{length}")
+	@PreAuthorize(value = "hasAuthority('ROLE_GET_BOOK')")
 	public List<BookEntity> findPagination(@PathVariable Integer begin, @PathVariable Integer length) {
 
 		if (length > 100) {
@@ -70,6 +78,7 @@ public class BookRestController {
 	}
 
 	@PostMapping(path = "/add")
+	@PreAuthorize(value = "hasAuthority('ROLE_ADD_BOOK')")
 	public BookEntity addBook(@Valid @RequestBody BookEntity entity, BindingResult br) {
 
 		if (br.hasErrors()) {
@@ -86,6 +95,7 @@ public class BookRestController {
 	}
 
 	@DeleteMapping(path = "/delete/{id}")
+	@PreAuthorize(value = "hasAuthority('ROLE_DELETE_BOOK')")
 	public BookEntity deleteBook(@PathVariable Integer id) {
 		BookEntity entity = repository.findById(id).get();
 
@@ -102,6 +112,7 @@ public class BookRestController {
 	}
 
 	@PutMapping(path = "/update")
+	@PreAuthorize(value = "hasAuthority('ROLE_UPDATE_BOOK')")
 	public boolean updateBook(@Valid @RequestBody BookEntity entity, BindingResult br) {
 		if (br.hasErrors()) {
 			throw new OurRuntimeException(br, "melumatlarin tamligi pozulub");
