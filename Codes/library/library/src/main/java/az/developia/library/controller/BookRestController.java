@@ -1,9 +1,6 @@
 package az.developia.library.controller;
 
-import java.util.List;
-import java.util.Optional;
-
-import org.modelmapper.ModelMapper;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -18,8 +15,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import az.developia.library.entity.BookEntity;
 import az.developia.library.exception.OurRuntimeException;
-import az.developia.library.repository.AuthorityRepository;
-import az.developia.library.repository.BookRepository;
+import az.developia.library.request.BookAddRequest;
+import az.developia.library.service.BookService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
@@ -28,87 +25,63 @@ import lombok.RequiredArgsConstructor;
 @CrossOrigin(origins = "*")
 @RequiredArgsConstructor
 public class BookRestController {
-
-	private final BookRepository repository;
-	private final ModelMapper mapper;
-	private final AuthorityRepository authorityRepository;
+	private final BookService service;
 
 	@GetMapping
 	@PreAuthorize(value = "hasAuthority('ROLE_GET_BOOK')")
-	public List<BookEntity> getBooks() {
+	public ResponseEntity<Object> getBooks() {
+		ResponseEntity<Object> response = service.findAll();
 
-		boolean empty = repository.findAll().isEmpty();
-		if (empty) {
-			throw new OurRuntimeException(null, "Heç bir tələbə yoxdur!");
-		}
-		List<BookEntity> allStudents = repository.findAll();
-
-		return allStudents;
+		return response;
 	}
 
 	@GetMapping(path = "/{id}")
 	@PreAuthorize(value = "hasAuthority('ROLE_GET_BOOK')")
-	public BookEntity getBookById(@PathVariable Integer id) {
-		Optional<BookEntity> byId = repository.findById(id);
-		boolean present = byId.isPresent();
-
+	public ResponseEntity<Object> getBookById(@PathVariable Integer id) {
 		if (id <= 0 || id == null) {
 			throw new OurRuntimeException(null, "Id'i boş qoymaq olmaz!");
 		}
 
-		if (present != true) {
-			throw new OurRuntimeException(null, "Id tapılmadı");
-		}
-		BookEntity book = byId.get();
+		ResponseEntity<Object> response = service.findById(id);
 
-		return book;
+		return response;
 	}
 
 	@GetMapping("/pagination/begin/{begin}/length/{length}")
 	@PreAuthorize(value = "hasAuthority('ROLE_GET_BOOK')")
-	public List<BookEntity> findPagination(@PathVariable Integer begin, @PathVariable Integer length) {
+	public ResponseEntity<Object> findPagination(@PathVariable Integer begin, @PathVariable Integer length) {
 
 		if (length > 100) {
 			throw new OurRuntimeException(null, "Max 100 kitaba eyni anda baxa bilərsiniz");
 		}
 
-		List<BookEntity> pagination = repository.findPagination(begin, length);
+		ResponseEntity<Object> PaginationResponse = service.findPagination(begin, length);
 
-		return pagination;
+		return PaginationResponse;
 	}
 
 	@PostMapping(path = "/add")
 	@PreAuthorize(value = "hasAuthority('ROLE_ADD_BOOK')")
-	public BookEntity addBook(@Valid @RequestBody BookEntity entity, BindingResult br) {
+	public ResponseEntity<Object> addBook(@Valid @RequestBody BookAddRequest request, BindingResult br) {
 
 		if (br.hasErrors()) {
 			throw new OurRuntimeException(br, "melumatlarin tamligi pozulub");
 		}
+//		
+		ResponseEntity<Object> response = service.add(request);
+		return response;
 
-		if (repository.findByName(entity.getName()) != null) {
-			throw new OurRuntimeException(br, "Bu name istifade edilir");
-		}
-
-		entity.setId(null);
-		repository.save(entity);
-		return entity;
 	}
 
 	@DeleteMapping(path = "/delete/{id}")
 	@PreAuthorize(value = "hasAuthority('ROLE_DELETE_BOOK')")
-	public BookEntity deleteBook(@PathVariable Integer id) {
-		BookEntity entity = repository.findById(id).get();
-
+	public ResponseEntity<BookEntity> deleteBook(@PathVariable Integer id) {
 		if (id == null || id <= 0) {
 			throw new OurRuntimeException(null, "id mütləqdir");
 		}
+		ResponseEntity<BookEntity> response = service.deleteById(id);
 
-		if (repository.findById(id) == null) {
-			throw new OurRuntimeException(null, "Kitab tapılmadı!");
-		}
-		repository.deleteById(id);
-
-		return entity;
+		return response;
 	}
 
 	@PutMapping(path = "/update")
@@ -121,13 +94,6 @@ public class BookRestController {
 		if (entity.getId() == null || entity.getId() <= 0) {
 			throw new OurRuntimeException(null, "id null olmaz");
 		}
-
-		if (repository.findById(entity.getId()).isPresent()) {
-			repository.save(entity);
-			return true;
-		} else {
-			throw new OurRuntimeException(null, "bu id tapilmadi");
-		}
-
+		return service.update(entity);
 	}
 }
