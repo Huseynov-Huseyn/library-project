@@ -61,14 +61,11 @@ public class UserService {
 	public boolean updateLibrarian(LibrarianAddRequest request, String oldUsername) {
 		String newUsername = request.getUsername();
 
-		System.out.println("--------------------------------");
-		System.out.println(newUsername);
-		System.out.println(oldUsername);
-		System.out.println("--------------------------------");
 		UserEntity entity = new UserEntity();
 		mapper.map(request, entity);
 		entity.setEnabled(1);
 		entity.setType("Librarian");
+
 		if (repository.findById(oldUsername).isPresent()) {
 			repository.updateMyUsername(oldUsername, newUsername);
 			repository.save(entity);

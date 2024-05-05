@@ -1,6 +1,5 @@
 package az.developia.library.controller;
 
-import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
@@ -15,8 +14,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import az.developia.library.exception.OurRuntimeException;
-import az.developia.library.repository.LibrarianRepository;
-import az.developia.library.repository.UserRepository;
 import az.developia.library.request.LibrarianAddRequest;
 import az.developia.library.response.LibrarianDeleteResponse;
 import az.developia.library.service.LibrarianService;
@@ -28,11 +25,7 @@ import lombok.RequiredArgsConstructor;
 @CrossOrigin(origins = "*")
 @RequiredArgsConstructor
 public class LibrarianRestController {
-
-	private final LibrarianRepository repository;
 	private final LibrarianService service;
-	private final UserRepository userRepository;
-	private final ModelMapper mapper;
 
 	@GetMapping
 	@PreAuthorize(value = "hasAuthority('ROLE_GET_LIBRARIAN')")

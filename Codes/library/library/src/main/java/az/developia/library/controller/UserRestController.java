@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import az.developia.library.entity.UserEntity;
 import az.developia.library.exception.OurRuntimeException;
-import az.developia.library.repository.LibrarianRepository;
 import az.developia.library.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 
@@ -23,7 +22,6 @@ import lombok.RequiredArgsConstructor;
 public class UserRestController {
 
 	private final UserRepository repository;
-	private final LibrarianRepository librarianRepository;
 	private final ModelMapper mapper;
 
 	@GetMapping
