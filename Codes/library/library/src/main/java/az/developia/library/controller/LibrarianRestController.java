@@ -73,7 +73,7 @@ public class LibrarianRestController {
 	@PutMapping(path = "/update")
 	@PreAuthorize(value = "hasAuthority('ROLE_UPDATE_LIBRARIAN')")
 //	burada username deyisimine icaze verme onu ancaq users hissesinden icaze ver
-	public ResponseEntity<Object> updateLibrarian(@RequestBody LibrarianAddRequest request, BindingResult br) {
+	public ResponseEntity<Object> updateLibrarian(@Valid @RequestBody LibrarianAddRequest request, BindingResult br) {
 
 		if (br.hasErrors()) {
 			throw new OurRuntimeException(br, "melumatlarin tamligi pozulub");

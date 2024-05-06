@@ -12,6 +12,7 @@ import az.developia.library.repository.BookRepository;
 import az.developia.library.repository.LibrarianRepository;
 import az.developia.library.repository.UserRepository;
 import az.developia.library.request.LibrarianAddRequest;
+import az.developia.library.request.StudentAddRequest;
 import jakarta.validation.Valid;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -75,6 +76,42 @@ public class UserService {
 		}
 
 		return true;
+	}
+
+	public boolean addStudentUser(@Valid StudentAddRequest dto) {
+
+		if (repository.findById(dto.getUsername()).isPresent() != true) {
+			UserEntity userEntity = new UserEntity();
+			userEntity.setEnabled(1);
+			userEntity.setType("Student");
+			mapper.map(dto, userEntity);
+			authorityRepository.addStudentAut(dto.getUsername());
+			repository.save(userEntity);
+		} else {
+			throw new OurRuntimeException(null, "Username istifadə edilir!");
+		}
+		return true;
+
+	}
+
+	public boolean updateStudent(StudentAddRequest request, String oldUsername) {
+		String newUsername = request.getUsername();
+
+		UserEntity entity = new UserEntity();
+		mapper.map(request, entity);
+		entity.setEnabled(1);
+		entity.setType("Student");
+
+		if (repository.findById(oldUsername).isPresent()) {
+			repository.updateMyUsername(oldUsername, newUsername);
+			repository.save(entity);
+			authorityRepository.updateUserUsername(newUsername, oldUsername);
+		} else {
+			throw new OurRuntimeException(null, "Belə username mövcud deyil");
+		}
+
+		return true;
+
 	}
 
 }
