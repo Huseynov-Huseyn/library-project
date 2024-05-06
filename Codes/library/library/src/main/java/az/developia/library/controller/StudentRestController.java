@@ -1,6 +1,5 @@
 package az.developia.library.controller;
 
-import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
@@ -15,8 +14,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import az.developia.library.exception.OurRuntimeException;
-import az.developia.library.repository.StudentRepository;
-import az.developia.library.repository.UserRepository;
 import az.developia.library.request.StudentAddRequest;
 import az.developia.library.response.StudentDeleteResponseList;
 import az.developia.library.service.StudentService;
@@ -29,10 +26,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class StudentRestController {
 
-	private final StudentRepository repository;
 	private final StudentService service;
-	private final UserRepository userRepository;
-	private final ModelMapper mapper;
 
 	@GetMapping
 	@PreAuthorize(value = "hasAuthority('ROLE_GET_STUDENT')")
