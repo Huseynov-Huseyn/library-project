@@ -31,4 +31,5 @@ public class BookEntity {
 //	@Past(message = "Keçmiş zaman olmalıdır")
 	private LocalDate realaseDate;
 
+	private Integer librarianId;
 }

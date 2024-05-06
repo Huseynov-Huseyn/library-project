@@ -14,4 +14,7 @@ public interface LibrarianRepository extends JpaRepository<LibrarianEntity, Inte
 	@Query
 	LibrarianEntity findByUsername(String username);
 
+	@Query
+	Integer findIdByUsername(String username);
+
 }

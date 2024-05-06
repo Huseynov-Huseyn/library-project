@@ -18,6 +18,8 @@ public interface BookRepository extends JpaRepository<BookEntity, Integer> {
 	@Query(value = "SELECT * FROM library.books limit ?1,?2", nativeQuery = true)
 	List<BookEntity> findPagination(Integer begin, Integer length);
 
+	List<BookEntity> findAllByLibrarianId(Integer librarianId);
+
 //	@Query(value = "SELECT COUNT(*) AS say FROM books WHERE name = ?1", nativeQuery = true)
 //	String isNamePresent(String name);
 

@@ -38,8 +38,9 @@ public class SecurityConfig {
 				.requestMatchers("/api/v1/auth/**", "/v2/api-docs", "/v3/api-docs", "/v3/api-docs/**",
 						"/swagger-resources", "/swagger-resources/**", "/configuration/ui", "/configuration/security",
 						"/swagger-ui/**", "/webjars/**", "/swagger-ui html")
-				.permitAll().requestMatchers(HttpMethod.POST, "/create-account-process").permitAll().and().logout()
-				.and().httpBasic().and().build();
+				.permitAll().requestMatchers(HttpMethod.POST, "/create-account-process").permitAll()
+				.requestMatchers(HttpMethod.POST, "/users/add").permitAll().and().logout().and().httpBasic().and()
+				.build();
 	}
 
 	@Bean

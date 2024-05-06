@@ -4,11 +4,14 @@ import java.util.List;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import az.developia.library.entity.BookEntity;
+import az.developia.library.entity.LibrarianEntity;
 import az.developia.library.exception.OurRuntimeException;
 import az.developia.library.repository.BookRepository;
+import az.developia.library.repository.LibrarianRepository;
 import az.developia.library.request.BookAddRequest;
 import az.developia.library.response.BookAddResponse;
 import az.developia.library.response.BookResponse;
@@ -22,11 +25,14 @@ import lombok.RequiredArgsConstructor;
 public class BookService {
 	private final BookRepository repository;
 	private final SecurityService securityService;
+	private final LibrarianRepository librarianRepository;
 
 	private final ModelMapper mapper;
 
 	public ResponseEntity<Object> findAll() {
-		List<BookEntity> allBooks = repository.findAll();
+		String username = SecurityContextHolder.getContext().getAuthentication().getName();
+		Integer librarianId = librarianRepository.findIdByUsername(username);
+		List<BookEntity> allBooks = repository.findAllByLibrarianId(librarianId);
 
 		if (allBooks.isEmpty()) {
 			throw new OurRuntimeException(null, "Heç bir tələbə yoxdur!");
@@ -55,12 +61,17 @@ public class BookService {
 	}
 
 	public ResponseEntity<Object> add(@Valid BookAddRequest request) {
+		String username = SecurityContextHolder.getContext().getAuthentication().getName();
+		LibrarianEntity operatorLibrarian = librarianRepository.findByUsername(username);
+		Integer librarianID = operatorLibrarian.getId();
 		if (repository.findByName(request.getName()) != null) {
 			throw new OurRuntimeException(null, "Bu name istifade edilir");
 		}
 		BookEntity entity = new BookEntity();
 		entity.setId(null);
 		mapper.map(request, entity);
+
+		entity.setLibrarianId(librarianID);
 		repository.save(entity);
 
 		BookAddResponse response = new BookAddResponse();
