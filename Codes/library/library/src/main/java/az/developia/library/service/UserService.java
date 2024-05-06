@@ -45,19 +45,6 @@ public class UserService {
 		return ResponseEntity.ok(response);
 	}
 
-	public ResponseEntity<Object> findByUsername(String username) {
-		Optional<UserEntity> userByUsername = repository.findUserByUsername(username);
-		UserResponse response = new UserResponse();
-
-		repository.findUserByUsername(username).ifPresentOrElse(o -> {
-			mapper.map(userByUsername.get(), response);
-		}, () -> {
-			throw new OurRuntimeException(null, "Bu Istifadəçi adı yoxdur");
-		});
-
-		return ResponseEntity.ok(response);
-	}
-
 	public boolean addLibrarianUser(@Valid LibrarianAddRequest dto) {
 		if (repository.findById(dto.getUsername()).isPresent() != true) {
 			UserEntity userEntity = new UserEntity();
